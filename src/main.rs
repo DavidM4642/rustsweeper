@@ -42,3 +42,11 @@ impl Board {
         }
     }
 }
+
+fn main() {
+    let board = Board::new(9, 9, 10);
+    println!(
+        "Board created: {}x{} with {} crabs",
+        board.rows, board.cols, board.total_crabs
+    );
+}
