@@ -1,5 +1,8 @@
 use std::fmt;
 // fmt will help draw the grid
+use rand::Rng;
+//rng generator
+
 
 #[derive(Clone)]
 struct Cell {
@@ -24,7 +27,6 @@ impl Cell {
 // impl is what we use to tell rust what the struct will do.
 
 //Creating the actual board//grid
-
 struct Board {
     cell: Vec<Vec<Cell>>, //a list of list of cells
     cols: usize,
@@ -41,12 +43,31 @@ impl Board {
             total_crabs,
         }
     }
+    fn place_crabs(&mut self){
+// setting up the rng generator, and the crab counter
+        let mut rng = rand::thread_rng();
+        let mut placed = 0;
+// while loop that first looks for a random spot on the board
+// once it finds the spot it places a mine (setting is_mine to true)
+// and adds 1 to the counter
+        while placed < self.total_crabs {
+            let row = rng.gen_range(0..self.rows);
+            let col = rng.gen_range(0..self.cols);
+
+            if !self.cell[row][col].is_mine{
+                self.cell[row][col].is_mine = true;
+                placed += 1;
+            }
+        }
+    }
 }
 
 fn main() {
-    let board = Board::new(9, 9, 10);
-    println!(
-        "Board created: {}x{} with {} crabs",
-        board.rows, board.cols, board.total_crabs
-    );
+    let mut board = Board::new(9,9,10);
+    board.place_crabs();
+    println!("Crabs and board have been created")
 }
+
+//struct is the list the thing is made of
+//impl/fn is the instructions of what the thing does
+//Board::new(9, 9, 10) is actually making the thing
