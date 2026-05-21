@@ -102,7 +102,7 @@ impl Board {
             print!("{} ", col + 1);
         }
         println!();
-// print eacj rpw with a letter label
+// print each row with a letter label
         for row in 0..self.rows {
             let letter = (b'A' + row as u8) as char;
             print!("{} ", letter);
