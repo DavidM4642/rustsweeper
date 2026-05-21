@@ -94,14 +94,23 @@ impl Board {
             }
         }
     }
-
+// Drawing the actual board
     fn draw (&self){
-        for rows in 0..self.rows {
-            for cols in 0..self.cols {
-            print!("#");
+        for row in 0..self.rows {
+            for col in 0..self.cols {
+            if !self.cell[row][col].is_revealed{
+                print!("#")
+            }else if self.cell[row][col].is_mine{
+                print!("💣")
+            }else if self.cell[row][col].nearby_crabs > 0{
+                print!("{}", self.cell[row][col].nearby_crabs)
+            }else {
+                print!(" ")
             }
-        println!();
+            }
+            println!();
         }
+
     }
 }
 
