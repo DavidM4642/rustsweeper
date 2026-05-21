@@ -96,10 +96,19 @@ impl Board {
     }
 // Drawing the actual board
     fn draw (&self){
+// print column numbers across the top
+        print!("  ");
+        for col in 0..self.cols {
+            print!("{} ", col + 1);
+        }
+        println!();
+// print eacj rpw with a letter label
         for row in 0..self.rows {
+            let letter = (b'A' + row as u8) as char;
+            print!("{} ", letter);
             for col in 0..self.cols {
             if !self.cell[row][col].is_revealed{
-                print!("#")
+                print!("# ")
             }else if self.cell[row][col].is_mine{
                 print!("💣")
             }else if self.cell[row][col].nearby_crabs > 0{
