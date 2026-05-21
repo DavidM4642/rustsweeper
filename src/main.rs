@@ -1,7 +1,7 @@
 use std::fmt;
 // fmt will help draw the grid
 use rand::Rng;
-//rng generator
+// rng generator
 
 
 #[derive(Clone)]
@@ -11,7 +11,7 @@ struct Cell {
     is_flagged: bool,
     nearby_crabs: u8,
 }
-//defining the cells and their states.
+// defining the cells and their states.
 
 impl Cell {
     fn new() -> Self {
@@ -23,12 +23,12 @@ impl Cell {
         }
     }
 }
-//creates the cell with nothing in it.
+// creates the cell with nothing in it.
 // impl is what we use to tell rust what the struct will do.
 
-//Creating the actual board//grid
+// Creating the actual board//grid
 struct Board {
-    cell: Vec<Vec<Cell>>, //a list of list of cells
+    cell: Vec<Vec<Cell>>, // a list of list of cells
     cols: usize,
     rows: usize,
     total_crabs: usize,
@@ -60,14 +60,59 @@ impl Board {
             }
         }
     }
+    fn calculate_nearby_crabs(&mut self) {
+        for row in 0..self.rows {
+            for col in 0..self.cols {
+                if self.cell[row][col].is_mine {
+                    continue;
+                }
+
+                let mut count = 0;
+
+                for dr in -1i32..=1 {
+                    for dc in -1i32..=1 {
+                        if dr == 0 && dc == 0 {
+                            continue;
+                        }
+
+                        let neighbor_row = row as i32 + dr;
+                        let neighbor_col = col as i32 + dc;
+
+                        if neighbor_row >= 0
+                            && neighbor_row < self.rows as i32
+                            && neighbor_col >= 0
+                            && neighbor_col < self.cols as i32
+                        {
+                            if self.cell[neighbor_row as usize][neighbor_col as usize].is_mine {
+                                count += 1;
+                            }
+                        }
+                    }
+                }
+
+                self.cell[row][col].nearby_crabs = count;
+            }
+        }
+    }
+
+    fn draw (&self){
+        for rows in 0..self.rows {
+            for cols in 0..self.cols {
+            print!("#");
+            }
+        println!();
+        }
+    }
 }
 
 fn main() {
-    let mut board = Board::new(9,9,10);
+    let mut board = Board::new(9, 9, 10);
     board.place_crabs();
-    println!("Crabs and board have been created")
+    board.calculate_nearby_crabs();
+    board.draw();
+    println!("Crabs and numbers calculated!");
 }
 
-//struct is the list the thing is made of
-//impl/fn is the instructions of what the thing does
-//Board::new(9, 9, 10) is actually making the thing
+// struct is the list the thing is made of
+// impl/fn is the instructions of what the thing does
+// Board::new(9, 9, 10) is actually making the thing
