@@ -110,7 +110,7 @@ impl Board {
             if !self.cell[row][col].is_revealed{
                 print!("# ")
             }else if self.cell[row][col].is_mine{
-                print!("💣")
+                print!("🦀")
             }else if self.cell[row][col].nearby_crabs > 0{
                 print!("{}", self.cell[row][col].nearby_crabs)
             }else {
