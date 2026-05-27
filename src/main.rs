@@ -1,7 +1,8 @@
-use std::fmt;
+use std::{fmt, str};
 // fmt will help draw the grid
 use rand::Rng;
 // rng generator
+use inquire::Text;
 
 
 #[derive(Clone)]
@@ -119,8 +120,41 @@ impl Board {
             }
             println!();
         }
-
     }
+}
+
+fn parse_input(input: &str) -> Option<(bool, usize, usize)> {
+// get rid of whitespace
+    let clean_input = input.trim().to_uppercase();
+// check if flagged and if so remove the "F "
+    let mut flagged = false;
+    let mut coords = clean_input.as_str();
+
+    if clean_input.starts_with("F "){
+        flagged = true;
+        coords = &clean_input[2..];
+    }
+// confirm lenths of coords
+    if coords.len() != 2 {
+        return None;}
+
+    let chars: Vec<char> = coords.chars().collect();
+    let letter = chars[0];
+    let number_char = chars[1];
+
+    if letter < 'A' || letter > 'I' {
+        return None;
+    }
+
+    let row = (letter as u8 - b'A') as usize;
+
+    if number_char < '1' || number_char > '9' {
+        return None;
+    }
+
+    let col = (number_char as u8 - b'1') as usize;
+
+    Some((flagged, row, col))
 }
 
 fn main() {
@@ -129,6 +163,21 @@ fn main() {
     board.calculate_nearby_crabs();
     board.draw();
     println!("Crabs and numbers calculated!");
+
+    let input = Text::new("Enter a cell (example: A5 or F A5):")
+        .prompt()
+        .unwrap();
+    println!("You selected: {}", input);
+
+    let results = parse_input(&input);
+    match results {
+        Some((flag, row, col)) => {
+            println!("flagged?: {}, row: {}, col: {}", flag, row, col);
+        }
+        None => {
+            println!("erm, that input looks invalid...")
+        }
+    }
 }
 
 // struct is the list the thing is made of
