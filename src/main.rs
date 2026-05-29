@@ -121,6 +121,47 @@ impl Board {
             println!();
         }
     }
+// reveal requested cell
+    fn reveal_cell(&mut self, row: usize, col: usize) {
+        self.cell[row][col].is_revealed = true
+    }
+// flag cell is requested
+    fn toggle_flag(&mut self, row:usize, col:usize) {
+        self.cell[row][col].is_flagged = !self.cell[row][col].is_flagged;
+    }
+
+    fn is_mine_hit(&self) -> bool {
+        for row in 0..self.rows {
+            for col in 0..self.cols {
+                if self.cell[row][col].is_revealed && self.cell[row][col].is_mine {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+
+    fn is_won(&self) -> bool {
+        for row in 0..self.rows {
+            for col in 0..self.cols {
+                let cell = &self.cell[row][col];
+                if !cell.is_mine && !cell.is_revealed {
+                    return false;
+                }
+            }
+        }
+        true
+    }
+
+    fn reveal_all_mines(&mut self) {
+        for row in 0..self.rows {
+            for col in 0..self.cols {
+                if self.cell[row][col].is_mine {
+                    self.cell[row][col].is_revealed = true;
+                }
+            }
+        }
+    }
 }
 
 fn parse_input(input: &str) -> Option<(bool, usize, usize)> {
@@ -145,16 +186,17 @@ fn parse_input(input: &str) -> Option<(bool, usize, usize)> {
     if letter < 'A' || letter > 'I' {
         return None;
     }
-
+// Converts row into its corresponding row number
     let row = (letter as u8 - b'A') as usize;
 
     if number_char < '1' || number_char > '9' {
         return None;
     }
-
+// converts col into the right column number
     let col = (number_char as u8 - b'1') as usize;
 
     Some((flagged, row, col))
+
 }
 
 fn main() {
@@ -172,7 +214,12 @@ fn main() {
     let results = parse_input(&input);
     match results {
         Some((flag, row, col)) => {
-            println!("flagged?: {}, row: {}, col: {}", flag, row, col);
+            if flag {
+                board.toggle_flag(row, col);
+            }else {
+                board.reveal_cell(row, col)
+            }
+            board.draw();
         }
         None => {
             println!("erm, that input looks invalid...")
