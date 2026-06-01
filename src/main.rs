@@ -13,7 +13,7 @@ use crate::board::Board;
 // Creating the actual board//grid
 
 fn main() -> ExitCode {
-    let mut board = Board::new(9, 9, 10);
+    let mut board = Board::new(9, 9, 9);
     board.place_crabs();
     board.calculate_nearby_crabs();
 

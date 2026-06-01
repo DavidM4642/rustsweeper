@@ -88,7 +88,7 @@ impl Board {
             for col in 0..self.cols {
                 let cell = &self.cell[row][col];
                 if cell.is_flagged {
-                    print!("🚩");
+                    print!("F ");
                 } else if !cell.is_revealed {
                     print!("# ");
                 } else if cell.is_mine {
@@ -96,7 +96,7 @@ impl Board {
                 } else if cell.nearby_crabs > 0 {
                     print!("{} ", cell.nearby_crabs);
                 } else {
-                    print!(" ");
+                    print!("▢ ");
                 }
             }
             println!();
@@ -151,7 +151,6 @@ impl Board {
         false
     }
 
-    #[expect(dead_code, reason = "will be used later")]
     pub fn is_won(&self) -> bool {
         for row in 0..self.rows {
             for col in 0..self.cols {

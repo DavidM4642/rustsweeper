@@ -26,7 +26,13 @@ pub fn run(board: &mut Board) -> Result<(), Box<dyn std::error::Error>> {
             }
         }
         if board.is_mine_hit() {
-            println!("Awwww better luck next time");
+            board.reveal_all_mines();
+            board.draw();
+            println!("That looked like it hurt... 🤕🤕🤕");
+            break;
+        }
+        if board.is_won() {
+            println!("🥇🥇LETS GOOOOO! GREAT JOB🥇🥇!");
             break;
         }
     }
