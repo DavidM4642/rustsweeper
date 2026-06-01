@@ -1,4 +1,5 @@
 use rand::Rng;
+use std::collections::VecDeque;
 
 use crate::cell::Cell;
 pub struct Board {
@@ -104,7 +105,33 @@ impl Board {
 
     // reveal requested cell
     pub fn reveal_cell(&mut self, row: usize, col: usize) {
-        self.cell[row][col].is_revealed = true;
+        let mut queue = VecDeque::new();
+        queue.push_back((row, col));
+        while let Some((row, col)) = queue.pop_front() {
+            if self.cell[row][col].is_revealed {
+                continue;
+            }
+            self.cell[row][col].is_revealed = true;
+            if self.cell[row][col].nearby_crabs == 0 {
+                let row = isize::try_from(row).expect("row out of bounds");
+                let col = isize::try_from(col).expect("col out of bounds");
+                for dr in -1isize..=1 {
+                    for dc in -1isize..=1 {
+                        if dr == 0 && dc == 0 {
+                            continue;
+                        }
+                        let r: isize = row + dr;
+                        let c: isize = col + dc;
+                        if r >= 0 && r < self.rows as isize && c >= 0 && c < self.cols as isize {
+                            queue.push_back((
+                                usize::try_from(r).expect("r is non-negative"),
+                                usize::try_from(c).expect("c is non-negative"),
+                            ));
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // flag cell is requested
