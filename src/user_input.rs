@@ -3,24 +3,33 @@ pub struct ParsedUserInput {
     pub row: usize,
     pub col: usize,
 }
+
+impl ParsedUserInput {
+    pub const fn new(flagged: bool, row: usize, col: usize) -> Self {
+        Self { flagged, row, col }
+    }
+}
+
 pub fn parse_input(input: &str) -> Option<ParsedUserInput> {
     // get rid of whitespace
     let clean_input = input.trim().to_uppercase();
-    // check if flagged and if so remove the "F "
-    let mut flagged = false;
-    let coords = clean_input
-        .strip_prefix("F ")
-        .map_or(clean_input.as_str(), |stripped| {
-            flagged = true;
-            stripped
-        });
+    let stripped_prefix = clean_input.strip_prefix("F ");
 
-    // confirm lenths of coords
-    if coords.len() != 2 {
+    // check if flagged and if so remove the "F "
+    let flagged = stripped_prefix.is_some();
+    let clean_input = stripped_prefix.unwrap_or(clean_input.as_str());
+    let (row, col) = parse_coords(clean_input)?;
+
+    Some(ParsedUserInput::new(flagged, row, col))
+}
+
+pub fn parse_coords(input: &str) -> Option<(usize, usize)> // (row, col)
+{
+    if input.len() != 2 {
         return None;
     }
 
-    let chars: Vec<char> = coords.chars().collect();
+    let chars: Vec<char> = input.chars().collect();
     let letter = chars[0];
     let number_char = chars[1];
 
@@ -37,8 +46,9 @@ pub fn parse_input(input: &str) -> Option<ParsedUserInput> {
     // converts col into the right column number
     let col = (number_char as u8 - b'1') as usize;
 
-    Some(ParsedUserInput { flagged, row, col })
+    Some((row, col))
 }
+// split up parse_input into two parts: parse_flagged and parse_coords
 
 #[cfg(test)]
 mod tests {

@@ -14,8 +14,6 @@ use crate::board::Board;
 
 fn main() -> ExitCode {
     let mut board = Board::new(9, 9, 9);
-    board.place_crabs();
-    board.calculate_nearby_crabs();
 
     if let Err(error) = game::run(&mut board) {
         eprintln!("{error}");

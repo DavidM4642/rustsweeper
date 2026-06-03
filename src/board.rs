@@ -19,7 +19,7 @@ impl Board {
         }
     }
 
-    pub fn place_crabs(&mut self) {
+    pub fn place_crabs(&mut self, user_row: usize, user_col: usize) {
         // setting up the rng generator, and the crab counter
         let mut rng = rand::thread_rng();
         let mut placed = 0;
@@ -30,7 +30,7 @@ impl Board {
             let row = rng.gen_range(0..self.rows);
             let col = rng.gen_range(0..self.cols);
 
-            if !self.cell[row][col].is_mine {
+            if (row == user_row && col == user_col) || !self.cell[row][col].is_mine {
                 self.cell[row][col].is_mine = true;
                 placed += 1;
             }
@@ -122,7 +122,10 @@ impl Board {
                         }
                         let r: isize = row + dr;
                         let c: isize = col + dc;
-                        if r >= 0 && r < self.rows as isize && c >= 0 && c < self.cols as isize {
+
+                        let rows_usize = isize::try_from(self.rows).expect("r is non-negative");
+                        let cols_usize = isize::try_from(self.cols).expect("c is non-negative");
+                        if r >= 0 && r < rows_usize && c >= 0 && c < cols_usize {
                             queue.push_back((
                                 usize::try_from(r).expect("r is non-negative"),
                                 usize::try_from(c).expect("c is non-negative"),
@@ -163,7 +166,6 @@ impl Board {
         true
     }
 
-    #[expect(dead_code, reason = "will be used later")]
     pub fn reveal_all_mines(&mut self) {
         for row in 0..self.rows {
             for col in 0..self.cols {

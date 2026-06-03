@@ -3,6 +3,7 @@ use inquire::Text;
 use crate::{board::Board, user_input};
 
 pub fn run(board: &mut Board) -> Result<(), Box<dyn std::error::Error>> {
+    let mut is_init = false;
     loop {
         board.draw();
 
@@ -10,27 +11,32 @@ pub fn run(board: &mut Board) -> Result<(), Box<dyn std::error::Error>> {
         println!("You selected: {input}");
 
         let results = user_input::parse_input(&input);
-        match results {
-            Some(parsed_user_input) => {
-                let flag = parsed_user_input.flagged;
-                let row = parsed_user_input.row;
-                let col = parsed_user_input.col;
-                if flag {
-                    board.toggle_flag(row, col);
-                } else {
-                    board.reveal_cell(row, col);
-                }
+        if let Some(parsed_user_input) = results {
+            let flag = parsed_user_input.flagged;
+            let row = parsed_user_input.row;
+            let col = parsed_user_input.col;
+            if !is_init {
+                board.place_crabs(parsed_user_input.row, parsed_user_input.col);
+                board.calculate_nearby_crabs();
+                is_init = true;
             }
-            None => {
-                println!("erm, that input looks invalid...");
+            if flag {
+                board.toggle_flag(row, col);
+            } else {
+                board.reveal_cell(row, col);
             }
-        }
+            parsed_user_input
+        } else {
+            println!("erm, that input looks invalid...");
+            continue;
+        };
         if board.is_mine_hit() {
             board.reveal_all_mines();
             board.draw();
             println!("That looked like it hurt... 🤕🤕🤕");
             break;
         }
+
         if board.is_won() {
             println!("🥇🥇LETS GOOOOO! GREAT JOB🥇🥇!");
             break;
